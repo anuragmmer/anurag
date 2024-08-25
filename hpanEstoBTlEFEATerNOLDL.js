@@ -144,12 +144,10 @@ function initializeClockAnimation(clock) {
 function detectPullDown(container) {
     let startY;
     let triggered = false;
-
-    // Check if the easter egg has already been triggered this session
-    if (localStorage.getItem('easterEggTriggered') === 'true') {
-        return;
-    }
-
+    let touchScrollThreshold = 100; // Threshold for touch/mouse pull
+    let wheelScrollThreshold = 1000; // Increased threshold for mouse wheel scroll
+    
+    // Touch events (unchanged)
     document.addEventListener('touchstart', (e) => {
         startY = e.touches[0].pageY;
     }, { passive: true });
@@ -158,11 +156,12 @@ function detectPullDown(container) {
         if (triggered) return;
         
         const pullDistance = e.touches[0].pageY - startY;
-        if (window.scrollY === 0 && pullDistance > 100) {
+        if (window.scrollY === 0 && pullDistance > touchScrollThreshold) {
             triggerEasterEgg(container);
         }
     }, { passive: true });
 
+    // Mouse events (unchanged)
     document.addEventListener('mousedown', (e) => {
         startY = e.pageY;
     });
@@ -171,7 +170,7 @@ function detectPullDown(container) {
         if (triggered || !startY) return;
         
         const pullDistance = e.pageY - startY;
-        if (window.scrollY === 0 && pullDistance > 100) {
+        if (window.scrollY === 0 && pullDistance > touchScrollThreshold) {
             triggerEasterEgg(container);
         }
     });
@@ -179,16 +178,38 @@ function detectPullDown(container) {
     document.addEventListener('mouseup', () => {
         startY = null;
     });
+
+    // Mouse wheel event with increased threshold
+    let wheelDelta = 0;
+    document.addEventListener('wheel', (e) => {
+        if (triggered) return;
+
+        // Check if scrolling up
+        if (e.deltaY < 0) {
+            wheelDelta += Math.abs(e.deltaY);
+            if (window.scrollY === 0 && wheelDelta > wheelScrollThreshold) {
+                triggerEasterEgg(container);
+                wheelDelta = 0; // Reset after triggering
+            }
+        } else {
+            wheelDelta = 0; // Reset if scrolling down
+        }
+    }, { passive: true });
+
+    // Reset triggered state after animation ends
+    function resetTrigger() {
+        triggered = false;
+        wheelDelta = 0;
+    }
+
+    container.addEventListener('transitionend', resetTrigger);
 }
 
 function triggerEasterEgg(container) {
     triggered = true;
     container.classList.add('active');
 
-    // Set the flag in localStorage
-    localStorage.setItem('easterEggTriggered', 'true');
-
-    // Automatically close after 12 seconds
+    // Automatically close after 10 seconds
     setTimeout(() => {
         closeEasterEgg(container);
     }, 10000);
