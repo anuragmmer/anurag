@@ -23,7 +23,7 @@ function createStyles() {
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: translateY(-100%);
+            transform: translateY(-150%);
             transition: transform 0.5s ease;
             z-index: 999;
         }
