@@ -1,0 +1,450 @@
+body {
+    font-family: "Manrope", sans-serif;
+    font-optical-sizing: auto;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    max-width: 550px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+    background-color: #161616;
+    color: #f9f9f9;
+    perspective: 1000px;
+
+}
+
+h1 {
+    padding-top: 50px;
+    font-family: 'Satoshi', sans-serif;
+    text-align: left;
+    color: #f3f3f3;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+    background-size: 400% 400%;
+    animation: gradientAnimation 10s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.description {
+    font-family: "Manrope", sans-serif;
+    font-optical-sizing: auto;
+    line-height: 170%;
+    color: #dfdfdf;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.description u {
+    color: #dfdfdf;
+    text-decoration: none;
+    background-image: none;
+    transition: color 0.5s ease-in-out;
+}
+
+.description u:hover {
+    color: transparent;
+    background-image: linear-gradient(90deg, #ff8533, #e5ff00);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 100%;
+}
+
+.socials {
+    display: inline-flex;
+    justify-content: left;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+}
+
+.socials p a {
+    text-decoration: none;
+    color: #7e7e7e;
+    margin-right: 10px;
+}
+
+.socials p a:hover {
+    color: #e5ff00;
+    transition: color 0.3s ease-in-out;
+}
+
+.sections {
+    font-family: "Manrope", sans-serif;
+    justify-content: space-around;
+    padding-bottom: 30px;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-section, .projects-section, .github-section, .soundcloud-section {
+    margin-bottom: 50px;
+}
+
+.sections h2 {
+    font-family: 'Satoshi', sans-serif;
+    color: #607d8b;
+    opacity: 0.8;
+    font-size: 0.9rem;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+    background-size: 400% 400%;
+    animation: gradientAnimation 10s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    user-select: none;
+}
+
+
+.section {
+    margin-bottom: 20px;
+}  
+
+.featured-section h2 {
+    opacity: 1;
+}
+
+.featured-section .link-container p {
+    font-family: 'Manrope', sans-serif;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 30px;
+    color: #7e7e7e;
+}
+
+.featured-section .link-container p:last-child {
+    margin-bottom: 20px;
+}
+
+.featured-section .link-container p:hover {
+    color: #919191;
+    transition: color 0.3s ease-in-out;
+}
+
+.custom-line {
+    border: 0; 
+    height: 1px; 
+    background-color: #585858; 
+    margin-bottom: 20px;
+    width: 100%;
+    opacity: 0.1; 
+}
+  
+
+.link-container {
+    margin-bottom: 10px;
+}
+
+.link-container:last-child {
+    margin-bottom: 0;
+}
+
+.section iframe {
+    font-family: 'Manrope', sans-serif;
+    border-radius: 8px;
+}
+
+.sections a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #e9e9e9;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.sections a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: -1px;
+    left: 0;
+    background-color: #f9f9f9;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.2s ease;
+}
+
+.sections a:hover {
+    color: #f9f9f9;
+}
+
+.sections a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.section-description p:hover {
+    color: #f3f3f3;
+    transition: all 0.5s ease-in-out;
+}
+
+.github-section {
+    position: relative;
+}
+
+.github-section h2 {
+        font-family: 'Satoshi', sans-serif;
+        color: #607d8b;
+        opacity: 0.6;
+        font-size: 0.9rem;
+        background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+        background-size: 400% 400%;
+        animation: gradientAnimation 10s ease infinite;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        user-select: none;
+}
+
+.github-section .timeline {
+    position: relative;
+    margin-left: 20px;
+}
+
+.github-section .timeline::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    background-color: #607d8b;
+    top: 0;
+    opacity: 0.1;
+    bottom: 0;
+    left: 0;
+}
+
+.github-section .timeline-item {
+    padding: 5px 0 0px 20px;
+    position: relative;
+}
+
+.github-section .timeline-content {
+    background-color: inherit;
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.github-section .timeline-content:last-child {
+    margin-bottom: 0px;
+}
+
+.github-section .github-project {
+    text-decoration: none;
+    color: #4493F8;
+}
+
+.github-section p {
+    font-size: 0.8rem;
+    color: #63968B;
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+}
+
+.github-section p:hover {
+    color: #39D353;
+    transition: color 0.5s ease-in-out;
+}
+
+.footer-content {
+    text-align: left;
+    font-family: 'Satoshi', sans-serif;
+    color: #8a8a8a;
+    opacity: 0.8;
+    font-size: 0.7rem;
+    background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #91eae4);
+    background-size: 400% 400%;
+    animation: gradientAnimation 10s ease- infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    user-select: none;
+}
+
+.footer-content:hover {
+    opacity: 1;
+    background: linear-gradient(45deg, #ffffff, #4665ff, #ffffff, #91eae4);
+    background-size: 400% 400%;
+    animation: gradientAnimation 1s ease-in-out;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.5s ease-in-out;
+}
+
+.rc-link-container {
+    width: 600px;
+    display: flex; /* Use flexbox for easier alignment */
+    justify-content: space-between; /* Space out elements */
+    align-items: center; /* Align items vertically center */
+    text-align: left;
+    border-radius: 5px;
+    position: relative; /* Position relative for absolute positioning of <p> */
+}
+
+.rc-link-container a2 {
+    font-size: 0.9rem;
+    color: #f3f3f3;
+}
+
+.rc-link-container a2:hover {
+    color: #f0f0f0;
+    transition: all 0.5s ease-in-out;
+}
+
+.rc-link-container p {
+    font-family: "Satoshi", sans-serif;
+    font-optical-sizing: auto;
+    font-size: 0.7rem;
+    color: #c9c9c9;
+    font-optical-sizing: auto;
+    margin-left: auto;
+    margin-right: 10px;
+    justify-content: right;
+    display: inline-block;
+    opacity: 0; 
+    user-select: none;
+}
+
+.rc-link-container:hover p {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.link-description {
+    display: block;
+    color: #7e7e7e;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    opacity: 1;
+}
+
+.link-description:hover {
+    color: #919191;
+    transition: color 0.5s ease-in-out;
+}
+
+/* Media Queries for Mobile Devices */
+@media only screen and (max-width: 600px) {
+    body {
+        max-width: 90vW;
+        width: 90VW;
+        padding: 20px;
+        margin-top: 100px;
+        font-size: 0.85rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+
+    .description {
+        line-height: 160%;
+    }
+
+    .featured-section .description {
+        max-width: 80vW;
+
+    } 
+
+    .link-description {
+        max-width: 80vW;
+
+    }
+
+    .section a {
+        max-width: 80vW;
+    }
+
+    .rc-link-container {
+        max-width: 80vW;
+    }
+
+
+    .sections {
+        padding-bottom: 20px;
+    }
+
+    .blog-section, .projects-section, .github-section, .soundcloud-section {
+        margin-bottom: 30px;
+    }
+
+    .sections h2 {
+        font-size: 0.85rem;
+    }
+
+    .socials {
+        font-size: 0.75rem;
+    }
+
+    .github-section p {
+        max-width: 60vW;
+        margin-right: 10px;
+        font-size: 0.75rem;
+    }
+
+}
+
+/* Card Animation */
+.card {
+    width: 600px;
+    height: 340px;
+    background-color: #2b2b2b;
+    border: #292929 solid 1px;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 30px;
+    user-select: none;
+    text-rendering: optimizeLegibility;
+}
+.card-image {
+    width: 100%;
+    height: 66.67%; /* 2/3 of the card height */
+    background-size: cover;
+    background-position: center;
+}
+.card-content {
+    padding: 20px;
+    text-align: left;
+}
+.card a {
+    color: #e9e9e9;
+    text-align: left;
+    font-size: 0.9rem;
+}
+.card p {
+    color: #666;
+    font-size: 0.8em;
+}
+.light-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(59, 59, 59, 0.034) 0%, rgba(255,255,255,0) 80%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .card {
+        width: 90%; /* Reduce card width for smaller screens */
+        margin: auto; /* Center card with auto margins */
+        margin-bottom: 30px;
+    }
+
+}
