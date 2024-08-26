@@ -1,4 +1,3 @@
-
 function createEasterEggContainer() {
     const container = document.createElement('div');
     container.id = 'easter-egg-container';
@@ -6,7 +5,7 @@ function createEasterEggContainer() {
     return container;
 }
 
-// Create styles for the easter egg
+
 function createStyles() {
     const style = document.createElement('style');
     style.textContent = `
@@ -56,20 +55,10 @@ function createStyles() {
             from { text-shadow: 0 0 10px #ffffffb2, 0 0 20px #ffffffb2, 0 0 30px #fff; }
             to { text-shadow: none; }
         }
-        #close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            opacity: 0;
-        }
     `;
     document.head.appendChild(style);
 }
+
 
 function loadGoogleFonts() {
     const link = document.createElement('link');
@@ -77,6 +66,7 @@ function loadGoogleFonts() {
     link.rel = "stylesheet";
     document.head.appendChild(link);
 }
+
 
 function createClockElement(container) {
     const clock = document.createElement('div');
@@ -86,15 +76,7 @@ function createClockElement(container) {
     return clock;
 }
 
-function createCloseButton(container) {
-    const button = document.createElement('button');
-    button.id = 'close-button';
-    button.textContent = '×';
-    button.addEventListener('click', () => closeEasterEgg(container));
-    container.appendChild(button);
-}
 
-// Clock animation logic
 function initializeClockAnimation(clock) {
     function randomDigits() {
         return Math.floor(Math.random() * 10);
@@ -127,9 +109,9 @@ function initializeClockAnimation(clock) {
 
     async function animationSequence() {
         await animateClock(3000);
-        await glowEffect('20:25', 3000);
-        await animateClock(3000);
         await glowEffect('CO:MN', 3000);
+        await animateClock(3000);
+        await glowEffect('20:25', 3000);
     }
 
     return async function() {
@@ -137,111 +119,119 @@ function initializeClockAnimation(clock) {
     };
 }
 
+
 function detectPullDown(container) {
     let startY;
     let triggered = false;
+    let isAnimating = false;
     let touchScrollThreshold = 200;
     let wheelScrollThreshold = 1000;
     let wheelDelta = 0;
 
     function handlePullDown(pullDistance) {
-        if (!triggered && window.scrollY === 0 && pullDistance > touchScrollThreshold) {
+        if (!triggered && !isAnimating && window.scrollY === 0 && pullDistance > touchScrollThreshold) {
             triggerEasterEgg(container);
         }
     }
 
-    function handlePullUp(pullDistance) {
-        if (triggered && pullDistance < -touchScrollThreshold) {
-            closeEasterEgg(container);
-        }
-    }
 
-    // Touch events
     document.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].pageY;
+        if (!isAnimating) {
+            startY = e.touches[0].pageY;
+        }
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-        const currentY = e.touches[0].pageY;
-        const pullDistance = currentY - startY;
-        handlePullDown(pullDistance);
-        handlePullUp(pullDistance);
+        if (!isAnimating && startY !== undefined) {
+            const currentY = e.touches[0].pageY;
+            const pullDistance = currentY - startY;
+            handlePullDown(pullDistance);
+        }
     }, { passive: true });
 
-    // Mouse events
+
     document.addEventListener('mousedown', (e) => {
-        startY = e.pageY;
+        if (!isAnimating) {
+            startY = e.pageY;
+        }
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (!startY) return;
-        const pullDistance = e.pageY - startY;
-        handlePullDown(pullDistance);
-        handlePullUp(pullDistance);
+        if (!isAnimating && startY !== null) {
+            const pullDistance = e.pageY - startY;
+            handlePullDown(pullDistance);
+        }
     });
 
     document.addEventListener('mouseup', () => {
         startY = null;
     });
 
-    // Mouse wheel event
+
     document.addEventListener('wheel', (e) => {
-        if (e.deltaY < 0) {
-            wheelDelta += Math.abs(e.deltaY);
-            if (window.scrollY === 0 && wheelDelta > wheelScrollThreshold) {
-                triggerEasterEgg(container);
+        if (!isAnimating) {
+            if (e.deltaY < 0) {
+                wheelDelta += Math.abs(e.deltaY);
+                if (window.scrollY === 0 && wheelDelta > wheelScrollThreshold) {
+                    triggerEasterEgg(container);
+                    wheelDelta = 0;
+                }
+            } else {
                 wheelDelta = 0;
             }
-        } else if (triggered) {
-            wheelDelta += e.deltaY;
-            if (wheelDelta > wheelScrollThreshold) {
-                closeEasterEgg(container);
-                wheelDelta = 0;
-            }
-        } else {
-            wheelDelta = 0;
         }
     }, { passive: true });
 
+
     container.addEventListener('transitionend', () => {
         if (!container.classList.contains('active')) {
-            triggered = false;
             wheelDelta = 0;
-            resetAnimation(container);
         }
     });
-}
 
-async function triggerEasterEgg(container) {
-    triggered = true;
-    container.classList.add('active');
+    async function triggerEasterEgg(container) {
+        if (isAnimating) return;
+        
+        isAnimating = true;
+        triggered = true;
+        container.classList.add('active');
 
-    const clock = container.querySelector('#clock');
-    const runAnimation = initializeClockAnimation(clock);
-    await runAnimation();
-    
-    closeEasterEgg(container);
-}
+        const clock = container.querySelector('#clock');
+        const runAnimation = initializeClockAnimation(clock);
+        await runAnimation();
+        
+        hideAndResetAnimation(container);
+    }
 
-function closeEasterEgg(container) {
-    container.classList.remove('active');
-}
+    function hideAndResetAnimation(container) {
+        container.classList.remove('active');
+        
 
-function resetAnimation(container) {
-    const clock = container.querySelector('#clock');
-    if (clock) {
-        clock.textContent = 'XX:XX';
-        clock.classList.remove('glow');
+        container.addEventListener('transitionend', function onTransitionEnd() {
+            container.removeEventListener('transitionend', onTransitionEnd);
+            resetAnimation(container);
+            isAnimating = false;
+            triggered = false;
+        }, { once: true });
+    }
+
+    function resetAnimation(container) {
+        const clock = container.querySelector('#clock');
+        if (clock) {
+            clock.textContent = 'XX:XX';
+            clock.classList.remove('glow');
+        }
     }
 }
+
 
 function initializeEasterEgg() {
     createStyles();
     loadGoogleFonts();
     const container = createEasterEggContainer();
-    const clock = createClockElement(container);
-    createCloseButton(container);
+    createClockElement(container);
     detectPullDown(container);
 }
+
 
 document.addEventListener('DOMContentLoaded', initializeEasterEgg);
