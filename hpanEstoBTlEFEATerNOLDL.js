@@ -1,6 +1,4 @@
-// Easter Egg Animation Script
 
-// Create a separate container for the easter egg
 function createEasterEggContainer() {
     const container = document.createElement('div');
     container.id = 'easter-egg-container';
@@ -23,7 +21,7 @@ function createStyles() {
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: translateY(-150%);
+            transform: translateY(-100%);
             transition: transform 0.5s ease;
             z-index: 999;
         }
@@ -43,9 +41,10 @@ function createStyles() {
             transform: translateY(0);
         }
         #clock {
-
-            font-family: "Courier Prime", monospace;
-            font-size: 2rem;
+            font-family: "Space Mono", monospace;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 1.5rem;
             color: #f9f9f9;
             transition: text-shadow 0.3s ease;
             z-index: 999999999;
@@ -72,15 +71,13 @@ function createStyles() {
     document.head.appendChild(style);
 }
 
-// Load Google Fonts
 function loadGoogleFonts() {
     const link = document.createElement('link');
-    link.href = "https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
 }
 
-// Create clock element
 function createClockElement(container) {
     const clock = document.createElement('div');
     clock.id = 'clock';
@@ -89,7 +86,6 @@ function createClockElement(container) {
     return clock;
 }
 
-// Create close button
 function createCloseButton(container) {
     const button = document.createElement('button');
     button.id = 'close-button';
@@ -111,9 +107,12 @@ function initializeClockAnimation(clock) {
     function glowEffect(text, duration) {
         clock.textContent = text;
         clock.classList.add('glow');
-        setTimeout(() => {
-            clock.classList.remove('glow');
-        }, duration);
+        return new Promise(resolve => {
+            setTimeout(() => {
+                clock.classList.remove('glow');
+                resolve();
+            }, duration);
+        });
     }
 
     function animateClock(duration) {
@@ -126,109 +125,123 @@ function initializeClockAnimation(clock) {
         });
     }
 
-    async function startAnimation() {
-        while (true) {
-            await animateClock(3000);
-            glowEffect('20:25', 3000);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            await animateClock(3000);
-            glowEffect('CO:MN', 3000);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
+    async function animationSequence() {
+        await animateClock(3000);
+        await glowEffect('20:25', 3000);
+        await animateClock(3000);
+        await glowEffect('CO:MN', 3000);
     }
 
-    startAnimation();
+    return async function() {
+        await animationSequence();
+    };
 }
 
-// Detect pull-down gesture and trigger animation
 function detectPullDown(container) {
     let startY;
     let triggered = false;
-    let touchScrollThreshold = 100; // Threshold for touch/mouse pull
-    let wheelScrollThreshold = 1000; // Increased threshold for mouse wheel scroll
-    
-    // Touch events (unchanged)
+    let touchScrollThreshold = 200;
+    let wheelScrollThreshold = 1000;
+    let wheelDelta = 0;
+
+    function handlePullDown(pullDistance) {
+        if (!triggered && window.scrollY === 0 && pullDistance > touchScrollThreshold) {
+            triggerEasterEgg(container);
+        }
+    }
+
+    function handlePullUp(pullDistance) {
+        if (triggered && pullDistance < -touchScrollThreshold) {
+            closeEasterEgg(container);
+        }
+    }
+
+    // Touch events
     document.addEventListener('touchstart', (e) => {
         startY = e.touches[0].pageY;
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-        if (triggered) return;
-        
-        const pullDistance = e.touches[0].pageY - startY;
-        if (window.scrollY === 0 && pullDistance > touchScrollThreshold) {
-            triggerEasterEgg(container);
-        }
+        const currentY = e.touches[0].pageY;
+        const pullDistance = currentY - startY;
+        handlePullDown(pullDistance);
+        handlePullUp(pullDistance);
     }, { passive: true });
 
-    // Mouse events (unchanged)
+    // Mouse events
     document.addEventListener('mousedown', (e) => {
         startY = e.pageY;
     });
 
     document.addEventListener('mousemove', (e) => {
-        if (triggered || !startY) return;
-        
+        if (!startY) return;
         const pullDistance = e.pageY - startY;
-        if (window.scrollY === 0 && pullDistance > touchScrollThreshold) {
-            triggerEasterEgg(container);
-        }
+        handlePullDown(pullDistance);
+        handlePullUp(pullDistance);
     });
 
     document.addEventListener('mouseup', () => {
         startY = null;
     });
 
-    // Mouse wheel event with increased threshold
-    let wheelDelta = 0;
+    // Mouse wheel event
     document.addEventListener('wheel', (e) => {
-        if (triggered) return;
-
-        // Check if scrolling up
         if (e.deltaY < 0) {
             wheelDelta += Math.abs(e.deltaY);
             if (window.scrollY === 0 && wheelDelta > wheelScrollThreshold) {
                 triggerEasterEgg(container);
-                wheelDelta = 0; // Reset after triggering
+                wheelDelta = 0;
+            }
+        } else if (triggered) {
+            wheelDelta += e.deltaY;
+            if (wheelDelta > wheelScrollThreshold) {
+                closeEasterEgg(container);
+                wheelDelta = 0;
             }
         } else {
-            wheelDelta = 0; // Reset if scrolling down
+            wheelDelta = 0;
         }
     }, { passive: true });
 
-    // Reset triggered state after animation ends
-    function resetTrigger() {
-        triggered = false;
-        wheelDelta = 0;
-    }
-
-    container.addEventListener('transitionend', resetTrigger);
+    container.addEventListener('transitionend', () => {
+        if (!container.classList.contains('active')) {
+            triggered = false;
+            wheelDelta = 0;
+            resetAnimation(container);
+        }
+    });
 }
 
-function triggerEasterEgg(container) {
+async function triggerEasterEgg(container) {
     triggered = true;
     container.classList.add('active');
 
-    // Automatically close after 10 seconds
-    setTimeout(() => {
-        closeEasterEgg(container);
-    }, 10000);
+    const clock = container.querySelector('#clock');
+    const runAnimation = initializeClockAnimation(clock);
+    await runAnimation();
+    
+    closeEasterEgg(container);
 }
 
 function closeEasterEgg(container) {
     container.classList.remove('active');
 }
 
-// Initialize the easter egg
+function resetAnimation(container) {
+    const clock = container.querySelector('#clock');
+    if (clock) {
+        clock.textContent = 'XX:XX';
+        clock.classList.remove('glow');
+    }
+}
+
 function initializeEasterEgg() {
     createStyles();
     loadGoogleFonts();
     const container = createEasterEggContainer();
     const clock = createClockElement(container);
     createCloseButton(container);
-    initializeClockAnimation(clock);
     detectPullDown(container);
 }
 
-// Start the script after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initializeEasterEgg);
